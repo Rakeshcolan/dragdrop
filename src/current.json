@@ -1,0 +1,97 @@
+{
+    "message": "Start",
+    "options": [
+      {
+        "response": "Start",
+        "follow_up": {
+          "message": "<p>One</p>",
+          "options": [
+            {
+              "response": "Yes",
+              "follow_up": {
+                "message": "<p>Two</p>",
+                "options": [
+                  {
+                    "response": "Yes",
+                    "follow_up": {
+                      "message": " This is working onkay",
+                      "options": [
+                        {
+                          "response": " This is working onkay",
+                          "follow_up": {
+                            "message": "stop"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "response": "No",
+                    "follow_up": {
+                      "message": "Next is stop",
+                      "options": [
+                        {
+                          "response": "Next is stop",
+                          "follow_up": {
+                            "message": "stop"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "response": "No",
+              "follow_up": {
+                "message": "<p>Three</p>",
+                "options": [
+                  {
+                    "response": "Yes",
+                    "follow_up": {
+                      "message": "<p>Four</p>",
+                      "options": [
+                        {
+                          "response": "Yes",
+                          "follow_up": {
+                            "message": "Next is stop",
+                            "options": [
+                              {
+                                "response": "Next is stop",
+                                "follow_up": {
+                                  "message": "stop"
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "response": "No",
+                          "follow_up": {
+                            "message": "stop"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "response": "No",
+                    "follow_up": {
+                      "message": "stop"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "response": "Stop",
+              "follow_up": {
+                "message": "stop"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }

@@ -11,3 +11,141 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.dndflow {
+  flex-direction: column;
+  display: flex;
+  flex-grow: 1;
+  height: 100%;
+}
+
+.dndflow aside {
+  border-right: 1px solid #eee;
+  padding: 15px 10px;
+  font-size: 12px;
+  background: #fcfcfc;
+}
+
+.dndflow aside .description {
+  margin-bottom: 10px;
+}
+
+.dndflow .dndnode {
+  height: 20px;
+  padding: 4px;
+  border: 1px solid #1a192b;
+  border-radius: 2px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+}
+
+.dndflow .dndnode.input {
+  border-color: #0041d0;
+}
+
+.dndflow .dndnode.output {
+  border-color: #ff0072;
+}
+
+.dndflow .reactflow-wrapper {
+  flex-grow: 1;
+  height: 95vh;
+  /* background-color: rgb(166, 155, 226); */
+}
+
+.dndflow .selectall {
+  margin-top: 10px;
+}
+
+@media screen and (min-width: 768px) {
+  .dndflow {
+    flex-direction: row;
+  }
+
+  .dndflow aside {
+    width: 20%;
+    max-width: 250px;
+  }
+}
+
+.groupinput{
+  height: 50px;
+  /* width: 145px; */
+
+
+
+}
+.groupLabel{
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.groupnodediv{
+  height: auto;
+  min-height: 250px;
+  padding:5px;
+  width: auto;
+  border: #95bfb0 3px solid;
+  box-shadow: 6px 4px 19px -6px rgba(0,0,0,0.75);
+}
+
+.textareadiv{
+  height: 20px;
+  border-radius: 2px;
+  background-color: #db5290;
+  margin: -6px -6px 0px -6px;
+}
+
+
+.quickdiv{
+ background-color: #decb6a;
+ font-size: 14px;
+ color: whitesmoke;
+ font-weight: 500;
+ text-align: center;
+}
+.grouptextarea{
+  border: none;
+  margin: 7px 0px !important;
+}
+.textareacontainer{
+ height: auto;
+ border: #95bfb0 2px solid;
+ box-shadow: 6px 4px 19px -6px rgba(0,0,0,0.75);
+ border-radius: 3px;
+ padding:5px;
+
+}
+
+.customnode{
+  background-color: azure;
+  width: 2px;
+}
+
+.react-flow__handle{
+  min-width: 1px !important;
+  min-height: 1px !important;
+  background-color: grey;
+  width: 2px !important;
+  height: 2px !important;
+}
+
+.activeborder:focus-visible{
+  outline: rgba(36, 35, 35, 0.479) 1px solid !important;
+  border-radius: 2px !important;
+}
+
+.activeborder{
+  font-size: 10px !important;
+}
+
+.activeborder::-webkit-scrollbar {
+  width: 4px !important;
+background: #e2dede;
+}
+
+textarea{
+  resize: none;
+}
