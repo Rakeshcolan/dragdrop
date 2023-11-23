@@ -15,6 +15,7 @@ import "../../index.css";
 import TextAreaUpdater from "../../components/fields/textArea.js";
 import ButtonNode from "../../components/fields/buttonNode.js";
 import FlowPage from "../../components/common/reactflow.js";
+import FormModal from "../../components/modals/formModal.js";
 
 const initialNodes = [
   {
@@ -268,6 +269,7 @@ const DnDFlow = () => {
   };
 
   return (
+    <>
     <div className="dndflow">
       
       <FlowPage
@@ -299,6 +301,8 @@ const DnDFlow = () => {
         Submit
       </button>
     </div>
+    <FormModal/>
+    </>
   );
 };
 
