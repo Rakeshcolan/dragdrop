@@ -1,21 +1,14 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import TextUpdaterNode from "../../components/fields/TextUpdaterNode.js";
 import { useNavigate } from "react-router-dom";
 
-import {
-  addEdge,
-  useNodesState,
-  useEdgesState,
-  Controls,
-  MarkerType,
-} from "reactflow";
+import { useNodesState, useEdgesState } from "reactflow";
 import "reactflow/dist/style.css";
 
 import "../../index.css";
-import TextAreaUpdater from "../../components/fields/textArea.js";
-import ButtonNode from "../../components/fields/buttonNode.js";
+import Switch from "@mui/material/Switch";
 import FlowPage from "../../components/common/reactflow.js";
-import FormModal from "../../components/modals/formModal.js";
+
+const label = { inputProps: { "aria-label": "Switch demo" } };
 
 const initialNodes = [
   {
@@ -25,32 +18,17 @@ const initialNodes = [
     position: { x: 250, y: 5 },
   },
 ];
-
-let id = 0;
-const getId = () => `dndnode_${id++}`;
-let groupId = 1;
-const getGroupId = () => `groupnode_${groupId++}`;
-
 const DnDFlow = () => {
   const reactFlowWrapper = useRef(null);
   const navigate = useNavigate();
+  const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [reactFlowInstance, setReactFlowInstance] = useState(null);
-  const [textUpdaterInput, setTextUpdaterInput] = useState({});
 
-
-  const onConnect = (params) =>
-    setEdges((eds) => {
-      params.markerEnd = {
-        type: MarkerType.ArrowClosed,
-        width: 20,
-        height: 20,
-        color: "black",
-      };
-      params.className = "customnode";
-      return addEdge(params, eds);
-    });
+  const [chatbotData, setChatbotData] = useState({
+    clientName: "",
+    chatbotName: "",
+  });
 
   const onStop = (event, node) => {};
   const onDragOver = useCallback((event) => {
@@ -58,87 +36,9 @@ const DnDFlow = () => {
     event.dataTransfer.dropEffect = "move";
   }, []);
 
-  const onDrop = useCallback(
-    (event) => {
-      event.preventDefault();
-      let parentGroupId = event.target.id;
-      // let parentGroup = event.target.classList[1];
-      let parentWrapper = event.target.classList[0];
-      const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-      let type = event.dataTransfer.getData("application/reactflow");
-      let droppingid = event.dataTransfer.getData("id");
-
-      const parentPosition = reactFlowInstance
-        .getNodes()
-        .find((element) => element.id === parentGroupId)?.position;
-      console.log("parenteposition", parentPosition);
-
-      if (typeof type === "undefined" || !type) {
-        return;
-      }
-
-      let newNode;
-      // if (parentGroupId =="groupColumn") {
-      if (parentGroupId.split("_").includes("groupnode")) {
-        const position = reactFlowInstance.project({
-          x: event.clientX - reactFlowBounds.left,
-          y: event.clientY - reactFlowBounds.top,
-        });
-        const adjustedPosition = {
-          x: position.x - parentPosition.x - 40,
-          y: position.y - parentPosition.y - 40,
-        };
-        let nodeId = getId();
-        newNode = {
-          id: nodeId,
-          type: type,
-          position: adjustedPosition,
-          // positionAbsolute:adjustedPosition,
-          // positionType: "absolute",
-          parentNode: parentGroupId,
-          data: { nodeId: nodeId, onChangeInput: updateTextUpdaterInput },
-        };
-      } else if (
-        parentWrapper === "react-flow__pane" &&
-        droppingid.split("_").includes("groupnode")
-      ) {
-        let nodeID = getGroupId();
-        const position = reactFlowInstance.project({
-          x: event.clientX - reactFlowBounds.left,
-          y: event.clientY - reactFlowBounds.top,
-        });
-        newNode = {
-          id: nodeID,
-          type: type,
-          position,
-          data: {
-            groupId: nodeID,
-            nodeId: nodeID,
-            onChangeInput: updateTextUpdaterInput,
-          },
-        };
-      } else {
-        const position = reactFlowInstance.project({
-          x: event.clientX - reactFlowBounds.left,
-          y: event.clientY - reactFlowBounds.top,
-        });
-        let nodeId = getId();
-        newNode = {
-          id: nodeId,
-          type: type,
-          position,
-          data: { nodeId: nodeId, onChangeInput: updateTextUpdaterInput },
-        };
-      }
-
-      setNodes((nds) => nds.concat(newNode));
-      // console.log("bnodes", nodes);
-    },
-    [reactFlowInstance]
-  );
-
   let oldId;
   function buildJSON(nodes, edges, nodeId, oldid) {
+    console.log("nodesss", nodes);
     const node = nodes.find((n) => n.id === nodeId);
     if (!node) {
       return null;
@@ -229,79 +129,129 @@ const DnDFlow = () => {
     return result;
   }
 
+  let nodeObject = localStorage.getItem("object");
+  useEffect(() => {
+    if (nodeObject) {
+      let nodeObjectJson = JSON.parse(nodeObject);
+      setNodes(nodeObjectJson.flowElements.nodes);
+      setEdges(nodeObjectJson.flowElements.edges);
+    }
+  }, []);
+
   const saveElements = () => {
-    let savedElements = reactFlowInstance.toObject();
+    let savedElements = {
+      flowElements: reactFlowInstance.toObject(),
+      flowName: chatbotData,
+    };
     console.log("saved", savedElements);
+    // if (nodeObject) {
+    //   let savedElemArra = [...nodeObject, JSON.stringify(savedElements)];
+    //   localStorage.setItem("object", savedElemArra);
+    // }
     localStorage.setItem("object", JSON.stringify(savedElements));
     navigate("/chatbot");
     const startingNodeId = "1";
     const resultJSON = buildJSON(
-      savedElements.nodes,
-      savedElements.edges,
+      savedElements.flowElements.nodes,
+      savedElements.flowElements.edges,
       startingNodeId
     );
     console.log(resultJSON);
   };
 
-  const updateTextUpdaterInput = (value, id) => {
-    setTextUpdaterInput({ value, id });
+  const updateName = (e) => {
+    e.preventDefault();
+    let name = e.target.name;
+    let value = e.target.value;
+    setChatbotData({ ...chatbotData, [name]: value });
   };
 
-  useEffect(()=>{
+  // const updateTextUpdaterInput = (value, id) => {
+  //   setTextUpdaterInput({ value, id });
+  // };
 
-    updateNode()
-  },[textUpdaterInput])
+  // useEffect(() => {
+  //   updateNode();
+  // }, [textUpdaterInput]);
 
-  const updateNode = () => {
-    return nodes.map((node) => {
-      try {
-        if (node.id === textUpdaterInput.id) {
-          node.data = {
-            ...node.data,
-            label: textUpdaterInput.value,
-          };
-        }
-        return node;
-      } catch (err) {
-        console.log("err", err);
-      }
-    });
-  };
+  // const updateNode = () => {
+  //   return nodes.map((node) => {
+  //     try {
+  //       if (node.id === textUpdaterInput.id) {
+  //         node.data = {
+  //           ...node.data,
+  //           label: textUpdaterInput.value,
+  //         };
+  //       }
+  //       return node;
+  //     } catch (err) {
+  //       console.log("err", err);
+  //     }
+  //   });
+  // };
 
   return (
     <>
-    <div className="dndflow">
-      
-      <FlowPage
-        updateNode={nodes}
-        ref={reactFlowWrapper}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        setReactFlowInstance={setReactFlowInstance}
-        onDragOver={onDragOver}
-        onDrop={onDrop}
-        onStop={onStop}
-      />
-      <button
-        onClick={() => saveElements()}
-        style={{
-          backgroundColor: "#7294d4",
-          margin: "10px",
-          color: "white",
-          height: "30px",
-          borderRadius: "5px",
-          fontSize: "20px",
-          position:'fixed',
-          bottom:"0"
+      <div className="dndflowheader">
+        <h2>Manage ChatBot</h2>
+        <div className="dndflowfields">
+          <div className="dndflowinput">
+            <label>Client Name</label>
+            <input
+              value={chatbotData.clientName}
+              name="clientName"
+              onChange={(e) => updateName(e)}
+            />
+          </div>
+          <div className="dndflowinput">
+            <label>Chatbot Name</label>
+            <input
+              value={chatbotData.chatbotName}
+              name="chatbotName"
+              onChange={(e) => updateName(e)}
+            />
+          </div>
+          <div className="dndactive">
+            <label>Status:</label>
+            <span>Active</span>
+            <Switch {...label} defaultChecked />
+            <span>InActive</span>
+          </div>
+        </div>
+      </div>
 
-        }}
-      >
-        Submit
-      </button>
-    </div>
-    <FormModal/>
+      <div className="dndflow">
+        <FlowPage
+          nodes={nodes}
+          ref={reactFlowWrapper}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          // onConnect={onConnect}
+          setEdges={setEdges}
+          setReactFlowInstance={setReactFlowInstance}
+          reactFlowInstance={reactFlowInstance}
+          onDragOver={onDragOver}
+          // onDrop={onDrop}
+          setNodes={setNodes}
+          onStop={onStop}
+        />
+        <button
+          onClick={() => saveElements()}
+          style={{
+            backgroundColor: "#7294d4",
+            margin: "10px",
+            color: "white",
+            height: "30px",
+            borderRadius: "5px",
+            fontSize: "20px",
+            position: "fixed",
+            bottom: "0",
+          }}
+        >
+          Submit
+        </button>
+      </div>
     </>
   );
 };

@@ -23,40 +23,16 @@ const ChatBot = () => {
       let nodeObject =   localStorage.getItem('object');
       let nodeObjectJson  =JSON.parse(nodeObject);
 
-      setNodes(nodeObjectJson.nodes);
-      setEdges(nodeObjectJson.edges);
+      setNodes(nodeObjectJson.flowElements.nodes);
+      setEdges(nodeObjectJson.flowElements.edges);
     },[])
 
-    const [nodeTypes, setNodeTypes] = useState({
-      textupdater: TextUpdaterNode,
-      buttonNode: ButtonNode,
-      textAreaUpdater: TextAreaUpdater,
-    })
-    
-    const updateNode = () => {
-      console.log(nodes);
-      if(nodes.length>0){
-        return nodes.map((node) => {
-          try {
-            if (node.id === textUpdaterInput.id) {
-              node.data = {
-                ...node.data,
-                label: textUpdaterInput.value,
-              };
-            }
-            return node;
-          } catch (err) {
-            console.log("err", err);
-          }
-        });
-      }
-    };
 // useEffect(()=>{
 //   updateNode()
 // },[nodes])
   return <>
   <div className="dndflow">
-    <FlowPage  updateNode={nodes} edges={edges} />
+    <FlowPage  nodes={nodes} edges={edges} />
   </div>
     
     </>;

@@ -27,12 +27,12 @@ function ResizeIcon() {
 }
 const handleStyle = { left: 10 };
 
-function TextUpdaterNode({ data, isConnectable }) {
+function TextUpdaterNode({ data, isConnectable,...props }) {
   const onChange = useCallback((evt) => {
     // console.log(evt.target.value);
   }, []);
   const [inputValue, setInputValue] = useState(data.inputValue || "");
-  console.log("dataaa",data);
+  console.log("dataaa",data,"---",props);
   const controlStyle = {
     background: "transparent",
     border: "none",
