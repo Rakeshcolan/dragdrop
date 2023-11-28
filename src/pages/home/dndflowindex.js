@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 
 import { useNodesState, useEdgesState } from "reactflow";
 import "reactflow/dist/style.css";
@@ -7,6 +7,9 @@ import "reactflow/dist/style.css";
 import "../../index.css";
 import Switch from "@mui/material/Switch";
 import FlowPage from "../../components/common/reactflow.js";
+import { useDispatch } from "react-redux";
+import { getFlow } from "../../redux/flowAction";
+import { useSelector } from "react-redux";
 
 const label = { inputProps: { "aria-label": "Switch demo" } };
 
@@ -20,11 +23,15 @@ const initialNodes = [
 ];
 const DnDFlow = () => {
   const reactFlowWrapper = useRef(null);
+  const location  = useLocation();
   const navigate = useNavigate();
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-
+  let {action,arrayIndex} = location.state;
+  let dispatch = useDispatch();
+  let nodeObject = useSelector((state)=>state.flowData)
+ console.log("nodeobjct",nodeObject);
   const [chatbotData, setChatbotData] = useState({
     clientName: "",
     chatbotName: "",
@@ -38,7 +45,7 @@ const DnDFlow = () => {
 
   let oldId;
   function buildJSON(nodes, edges, nodeId, oldid) {
-    console.log("nodesss", nodes);
+    // console.log("nodesss", nodes);
     const node = nodes.find((n) => n.id === nodeId);
     if (!node) {
       return null;
@@ -129,14 +136,15 @@ const DnDFlow = () => {
     return result;
   }
 
-  let nodeObject = localStorage.getItem("object");
   useEffect(() => {
-    if (nodeObject) {
-      let nodeObjectJson = JSON.parse(nodeObject);
-      setNodes(nodeObjectJson.flowElements.nodes);
-      setEdges(nodeObjectJson.flowElements.edges);
+    if (nodeObject && action =="Edit") {
+     
+      setNodes(nodeObject[arrayIndex].flowElements.nodes);
+      setEdges(nodeObject[arrayIndex].flowElements.edges);
     }
   }, []);
+
+
 
   const saveElements = () => {
     let savedElements = {
@@ -144,12 +152,9 @@ const DnDFlow = () => {
       flowName: chatbotData,
     };
     console.log("saved", savedElements);
-    // if (nodeObject) {
-    //   let savedElemArra = [...nodeObject, JSON.stringify(savedElements)];
-    //   localStorage.setItem("object", savedElemArra);
-    // }
-    localStorage.setItem("object", JSON.stringify(savedElements));
-    navigate("/chatbot");
+    
+    dispatch(getFlow({savedElements}))
+    navigate("/");
     const startingNodeId = "1";
     const resultJSON = buildJSON(
       savedElements.flowElements.nodes,
@@ -166,29 +171,7 @@ const DnDFlow = () => {
     setChatbotData({ ...chatbotData, [name]: value });
   };
 
-  // const updateTextUpdaterInput = (value, id) => {
-  //   setTextUpdaterInput({ value, id });
-  // };
-
-  // useEffect(() => {
-  //   updateNode();
-  // }, [textUpdaterInput]);
-
-  // const updateNode = () => {
-  //   return nodes.map((node) => {
-  //     try {
-  //       if (node.id === textUpdaterInput.id) {
-  //         node.data = {
-  //           ...node.data,
-  //           label: textUpdaterInput.value,
-  //         };
-  //       }
-  //       return node;
-  //     } catch (err) {
-  //       console.log("err", err);
-  //     }
-  //   });
-  // };
+  
 
   return (
     <>

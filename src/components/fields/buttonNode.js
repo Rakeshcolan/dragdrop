@@ -20,6 +20,7 @@ function ButtonNode({ data, isConnectable }) {
 
 
   const updateButtonName = (e)=>{
+    console.log("working onchange",e.target.value,data.nodeId);
     setButtonName(e.target.value)
     data.onChangeInput(e.target.value,data.nodeId)
   }

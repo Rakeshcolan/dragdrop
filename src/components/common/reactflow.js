@@ -24,8 +24,9 @@ const FlowPage = forwardRef((props, ref) => {
   } = props;
   
   const reactFlowWrapper = useRef(null);
-  const [textUpdaterInput, setTextUpdaterInput] = useState({});
   
+  const [textUpdaterInput, setTextUpdaterInput] = useState({value:'',id:""});
+  // const [textUpdaterInputId, setTextUpdaterInputId] = useState(;
   const [nodeTypes, setNodeTypes] = useState({
     textupdater: TextUpdaterNode,
     buttonNode: ButtonNode,
@@ -37,8 +38,23 @@ const getId = () => `dndnode_${id++}`;
 let groupId = 1;
 const getGroupId = () => `groupnode_${groupId++}`;
 
+const updateTextUpdaterInput = (value, id) => {
+  console.log("settextupdate",{...textUpdaterInput,["value"]:value,"id":id});
+  setTextUpdaterInput({"value":value,"id":id});
+  // updateNode(value,id)
+  // checkNode();
+};
+
+const checkNode = ()=>{
+  // console.log("textupdatedddddddd",textUpdaterInput);
+}
+  if(nodes.length>1){
+    [...nodes].map((val)=> { if (!val.data.onChangeInput) val.data.onChangeInput=updateTextUpdaterInput})
+  }
+  
 useEffect(() => {
   updateNode();
+  console.log("i[ooooooo");
 }, [textUpdaterInput]);
 
 const onConnect = (params) =>
@@ -53,16 +69,19 @@ setEdges((eds) => {
   return addEdge(params, eds);
 });
 
+// console.log(textUpdaterInput,"textUpdaterInput");
 
 const updateNode = () => {
+  
   return nodes.map((node) => {
-    console.log("nupdateaertewr",node);
     try {
       if (node.id === textUpdaterInput.id) {
+        console.log("innodeeeeee");
         node.data = {
              ...node.data,
              label: textUpdaterInput.value,
         };
+        console.log("trynodeeee",node.data);
       }
       return node;
     } catch (err) {
@@ -70,6 +89,7 @@ const updateNode = () => {
     }
   });
 };
+// console.log("nupdateaertewr",updateNode());
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
@@ -83,16 +103,12 @@ const updateNode = () => {
       const parentPosition = reactFlowInstance
         .getNodes()
         .find((element) => element.id === parentGroupId)?.position;
-      console.log("parenteposition", parentPosition);
+      // console.log("parenteposition", parentPosition);
 
       if (typeof type === "undefined" || !type) {
         return;
       }
-      const updateTextUpdaterInput = (value, id) => {
-    
-        setTextUpdaterInput({ value, id });
-      };
-
+     
       let newNode;
       const position = reactFlowInstance.project({
         x: event.clientX - reactFlowBounds.left,
@@ -137,17 +153,19 @@ const updateNode = () => {
       }
 
       setNodes((nds) => nds.concat(newNode));
-      // console.log("bnodes", nodes);
+   
     },
     [reactFlowInstance]
   );
+
+  // const onNodesChange = updateNode();
 
   return (
     <>
       <ReactFlowProvider>
         <div className="reactflow-wrapper" id="flowpaper" ref={reactFlowWrapper}>
           <ReactFlow
-            nodes={nodes}
+            nodes={updateNode()}
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
