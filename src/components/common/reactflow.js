@@ -40,22 +40,20 @@ const getGroupId = () => `groupnode_${groupId++}`;
 
 const updateTextUpdaterInput = (value, id) => {
   console.log("settextupdate",{...textUpdaterInput,["value"]:value,"id":id});
-  setTextUpdaterInput({"value":value,"id":id});
-  // updateNode(value,id)
+  // setTextUpdaterInput({"value":value,"id":id});
+  updateNode(id,value)
   // checkNode();
 };
 
-const checkNode = ()=>{
-  // console.log("textupdatedddddddd",textUpdaterInput);
-}
+
   if(nodes.length>1){
-    [...nodes].map((val)=> { if (!val.data.onChangeInput) val.data.onChangeInput=updateTextUpdaterInput})
+    nodes.map((val)=>  val.data.onChangeInput=updateTextUpdaterInput)
   }
   
-useEffect(() => {
-  updateNode();
-  console.log("i[ooooooo");
-}, [textUpdaterInput]);
+// useEffect(() => {
+//   updateNode();
+//   console.log("i[ooooooo");
+// }, [textUpdaterInput]);
 
 const onConnect = (params) =>
 setEdges((eds) => {
@@ -71,23 +69,36 @@ setEdges((eds) => {
 
 // console.log(textUpdaterInput,"textUpdaterInput");
 
-const updateNode = () => {
+const updateNode = (id,value) => {
+
+  setNodes((nds) =>
+      nds.map((node) => {
+        if (node.id === id) {
+          node.data = {
+            ...node.data,
+            label:value
+          };
+        }
+
+        return node;
+      })
+    );
   
-  return nodes.map((node) => {
-    try {
-      if (node.id === textUpdaterInput.id) {
-        console.log("innodeeeeee");
-        node.data = {
-             ...node.data,
-             label: textUpdaterInput.value,
-        };
-        console.log("trynodeeee",node.data);
-      }
-      return node;
-    } catch (err) {
-      console.log("err", err);
-    }
-  });
+  // return nodes.map((node) => {
+  //   try {
+  //     if (node.id === textUpdaterInput.id) {
+  //       console.log("innodeeeeee");
+  //       node.data = {
+  //            ...node.data,
+  //            label: textUpdaterInput.value,
+  //       };
+  //       console.log("trynodeeee",node.data);
+  //     }
+  //     return node;
+  //   } catch (err) {
+  //     console.log("err", err);
+  //   }
+  // });
 };
 // console.log("nupdateaertewr",updateNode());
   const onDrop = useCallback(
@@ -165,7 +176,7 @@ const updateNode = () => {
       <ReactFlowProvider>
         <div className="reactflow-wrapper" id="flowpaper" ref={reactFlowWrapper}>
           <ReactFlow
-            nodes={updateNode()}
+            nodes={nodes}
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
