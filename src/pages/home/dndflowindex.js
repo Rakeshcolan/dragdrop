@@ -30,8 +30,8 @@ const DnDFlow = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   let {action,arrayIndex} = location.state;
   let dispatch = useDispatch();
-  let nodeObject = useSelector((state)=>state.flowData)
- console.log("nodeobjct",nodeObject);
+  let nodeObject = useSelector((state)=>state.flowData);
+
   const [chatbotData, setChatbotData] = useState({
     clientName: "",
     chatbotName: "",
@@ -45,7 +45,7 @@ const DnDFlow = () => {
 
   let oldId;
   function buildJSON(nodes, edges, nodeId, oldid) {
-    // console.log("nodesss", nodes);
+    console.log("nodesss", nodes);
     const node = nodes.find((n) => n.id === nodeId);
     if (!node) {
       return null;
@@ -138,13 +138,11 @@ const DnDFlow = () => {
 
   useEffect(() => {
     if (nodeObject && action =="Edit") {
-     
-      setNodes(nodeObject[arrayIndex].flowElements.nodes);
+       let savedNodeObject = [...nodeObject[arrayIndex].flowElements.nodes];
+      setNodes(savedNodeObject);
       setEdges(nodeObject[arrayIndex].flowElements.edges);
     }
   }, []);
-
-
 
   const saveElements = () => {
     let savedElements = {

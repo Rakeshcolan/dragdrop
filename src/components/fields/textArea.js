@@ -1,13 +1,23 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Handle, Position } from "reactflow";
 import "../../index.css";
+import { InputContext } from "../../inputcontext/inputContext";
 
 const TextAreaUpdater = ({ data, isConnectable }) => {
+  let contextdata = useContext(InputContext)
+  let {value,changeId,changeValue} = contextdata;
   const [textValue, setTextValue] = useState("");
   const handleChange = (e) => {
     setTextValue(e.target.value);
-    data.onChangeInput(e.target.value, data.nodeId);
+    changeValue(e.target.value,data.nodeId)
+    // data.onChangeInput(e.target.value, data.nodeId);
   };
+
+  useEffect(()=>{
+    if(data.label){
+      setTextValue(data.label)
+    }
+  },[])
   return (
     <>
       <Handle type="target" position={Position.Left} />
@@ -25,7 +35,7 @@ const TextAreaUpdater = ({ data, isConnectable }) => {
             rows="5"
             cols="15"
             className="grouptextarea activeborder"
-            value={data.label}
+            value={textValue}
             onChange={(event) => handleChange(event)}
           ></textarea>
         </div>

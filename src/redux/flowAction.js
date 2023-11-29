@@ -3,10 +3,10 @@ import { createSlice } from "@reduxjs/toolkit";
 let flowArray = localStorage.getItem('object')
 
 let initialState = {
-    flowData:[]
+    flowData:[],
+     savedFlow:false
+    
 }
-
-// console.log("flowDAtaaaaaa",JSON.parse(initialState.flowData));
 
 export const flowSlice = createSlice({
     initialState,
@@ -15,10 +15,11 @@ export const flowSlice = createSlice({
         getFlow:(state,{payload})=>{
             console.log("payloadd",payload.savedElements);
             state.flowData = [...state.flowData,payload.savedElements]
+            
         },
         resetFormData:(state,{payload})=>{
             console.log("working ");
-            state.flowData = payload.value
+            state.flowData = []
         }
     }
 })

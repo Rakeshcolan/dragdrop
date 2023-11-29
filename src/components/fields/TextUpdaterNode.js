@@ -1,7 +1,8 @@
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Handle, NodeResizeControl, NodeResizer, Position } from "reactflow";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { InputContext } from "../../inputcontext/inputContext";
 
 function ResizeIcon() {
   return (
@@ -28,12 +29,10 @@ function ResizeIcon() {
 const handleStyle = { left: 10 };
 
 function TextUpdaterNode({ data, isConnectable,...props }) {
-  console.log("textupdatedataa",data);
-  const onChange = useCallback((evt) => {
-    // console.log(evt.target.value);
-  }, []);
+
+  let contextdata = useContext(InputContext)
+  let {value,changeId,changeValue} = contextdata;
   const [inputValue, setInputValue] = useState(data.inputValue || "");
-  // console.log("dataaa",data,"---",props);
   const controlStyle = {
     background: "transparent",
     border: "none",
@@ -43,9 +42,14 @@ function TextUpdaterNode({ data, isConnectable,...props }) {
     const data1 = event.target.value;
 
     setInputValue(data1);
-    data.onChangeInput(data1, data.groupId);
+    changeValue(event.target.value,data.nodeId)
+    // data.onChangeInput(data1, data.groupId);
   };
-
+  useEffect(()=>{
+    if(data.label){
+      setInputValue(data.label)
+    }
+  },[])
   return (
     <>
       <NodeResizeControl style={controlStyle} minWidth={100} minHeight={50}>
@@ -69,19 +73,10 @@ function TextUpdaterNode({ data, isConnectable,...props }) {
         className="groupinput activeborder"
           rows="5"
           cols="20"
-          value={data.label}
+          // value={data.label}
+          value={inputValue}
           onChange={(event) => handleChange(event)}
         ></textarea>
-        {/* <input
-          value={inputValue}
-          className="groupinput"
-          onChange={(event) => {
-            const data1 = event.target.value;
-            // console.log("event",data1,event.target);
-            setInputValue(data1);
-            data.onChangeInput(data1, data.groupId);
-          }}
-        ></input> */}
         <Handle
           type="target"
           position={Position.Left}

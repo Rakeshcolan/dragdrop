@@ -39,7 +39,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 export default function DataTable(props) {
     let {flowData} = props;
     const navigate = useNavigate();
-    const dispath = useDispatch();
+    const dispatch = useDispatch();
     const handleRoute = (val,path,index)=>{
         navigate(`${path}`,{state:{action:val,arrayIndex:index}})
     }
@@ -62,7 +62,7 @@ export default function DataTable(props) {
           Add
         </Button>
         <span>||</span>
-        <Button color="success" variant="contained" onClick={()=>dispath(resetFormData({value:[]}))}>
+        <Button color="success" variant="contained" onClick={()=>dispatch(resetFormData({value:[]}))}>
           Reset
         </Button>
         </div>
