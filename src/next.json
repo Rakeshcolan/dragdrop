@@ -1,0 +1,232 @@
+{
+    "message": "Start",
+    "options": [
+        {
+            "message": "Start",
+            "follow_up": {
+                "message": "{First_Name}{Product}",
+                "options": [
+                    {
+                        "response": "Yes",
+                        "follow_up": {
+                            "message": "{Product}{Gross Sales}",
+                            "options": [
+                                {
+                                    "response": "Yes",
+                                    "follow_up": {
+                                        "message": "{COGS}{Profit}",
+                                        "options": [
+                                            {
+                                                "response": "Yes",
+                                                "follow_up": {
+                                                    "message": "{Sales}{Gross Sales}",
+                                                    "options": [
+                                                        {
+                                                            "response": "Yes",
+                                                            "follow_up": {
+                                                                "message": "stop"
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "response": "No",
+                                                "follow_up": {
+                                                    "message": "dfaer{Ph_No}{Gross Sales}",
+                                                    "options": [
+                                                        {
+                                                            "follow_up": {
+                                                                "message": "stop"
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "response": "No",
+                                    "follow_up": {
+                                        "message": "{Manufacturing Price}{Gross Sales}",
+                                        "options": [
+                                            {
+                                                "response": "Yes",
+                                                "follow_up": {
+                                                    "message": "{Sales}{Gross Sales}",
+                                                    "options": [
+                                                        {
+                                                            "response": "Yes",
+                                                            "follow_up": {
+                                                                "message": "stop"
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "response": "No",
+                                                "follow_up": {
+                                                    "message": "{Discounts}",
+                                                    "options": [
+                                                        {
+                                                            "response": "Yes",
+                                                            "follow_up": {
+                                                                "message": "dfaer{Ph_No}{Gross Sales}",
+                                                                "options": [
+                                                                    {
+                                                                        "follow_up": {
+                                                                            "message": "stop"
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        },
+                                                        {
+                                                            "response": "No",
+                                                            "follow_up": {
+                                                                "message": "dfaer{Ph_No}{Gross Sales}",
+                                                                "options": [
+                                                                    {
+                                                                        "follow_up": {
+                                                                            "message": "stop"
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "response": "No",
+                        "follow_up": {
+                            "message": "{Ph_No}{Sale Price}",
+                            "options": [
+                                {
+                                    "response": "Yes",
+                                    "follow_up": {
+                                        "message": "{Sale Price}{Gross Sales}",
+                                        "options": [
+                                            {
+                                                "response": "Yes",
+                                                "follow_up": {
+                                                    "message": "{Discounts}",
+                                                    "options": [
+                                                        {
+                                                            "response": "Yes",
+                                                            "follow_up": {
+                                                                "message": "dfaer{Ph_No}{Gross Sales}",
+                                                                "options": [
+                                                                    {
+                                                                        "follow_up": {
+                                                                            "message": "stop"
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        },
+                                                        {
+                                                            "response": "No",
+                                                            "follow_up": {
+                                                                "message": "dfaer{Ph_No}{Gross Sales}",
+                                                                "options": [
+                                                                    {
+                                                                        "follow_up": {
+                                                                            "message": "stop"
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "response": "No",
+                                                "follow_up": {
+                                                    "message": "{Sales}{Gross Sales}",
+                                                    "options": [
+                                                        {
+                                                            "response": "Yes",
+                                                            "follow_up": {
+                                                                "message": "stop"
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "response": "No",
+                                    "follow_up": {
+                                        "message": "{Manufacturing Price}{Gross Sales}",
+                                        "options": [
+                                            {
+                                                "response": "Yes",
+                                                "follow_up": {
+                                                    "message": "{Sales}{Gross Sales}",
+                                                    "options": [
+                                                        {
+                                                            "response": "Yes",
+                                                            "follow_up": {
+                                                                "message": "stop"
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "response": "No",
+                                                "follow_up": {
+                                                    "message": "{Discounts}",
+                                                    "options": [
+                                                        {
+                                                            "response": "Yes",
+                                                            "follow_up": {
+                                                                "message": "dfaer{Ph_No}{Gross Sales}",
+                                                                "options": [
+                                                                    {
+                                                                        "follow_up": {
+                                                                            "message": "stop"
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        },
+                                                        {
+                                                            "response": "No",
+                                                            "follow_up": {
+                                                                "message": "dfaer{Ph_No}{Gross Sales}",
+                                                                "options": [
+                                                                    {
+                                                                        "follow_up": {
+                                                                            "message": "stop"
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

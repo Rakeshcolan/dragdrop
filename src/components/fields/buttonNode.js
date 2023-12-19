@@ -1,9 +1,8 @@
-import { useContext, useEffect, useState } from "react";
 import { Handle, Position } from "reactflow";
 import "../../index.css";
-import { InputContext } from "../../inputcontext/inputContext";
+import { InputHoc } from "../hoc/inputHoc";
 
-function ButtonNode({ data, isConnectable }) {
+function ButtonNode({  data, isConnectable,handleChange,inputValue }) {
   let buttonStyle = {
     backgroundColor: "#b1bab3",
     border: "none",
@@ -13,21 +12,7 @@ function ButtonNode({ data, isConnectable }) {
     textAlign: "center",
     boxShadow: " -4px 5px 5px 0px rgba(225, 230, 226)",
   };
-  let contextdata = useContext(InputContext)
-  let {value,changeId,changeValue} = contextdata;
 
-  const [buttonName, setButtonName] = useState("");
-  const updateButtonName = (e) => {
-    setButtonName(e.target.value);
-    changeValue(e.target.value,data.nodeId)
-    // data.onChangeInput(e.target.value, data.nodeId);
-  };
-
-  useEffect(()=>{
-    if(data.label){
-      setButtonName(data.label)
-    }
-  },[])
 
   return (
     <>
@@ -43,13 +28,13 @@ function ButtonNode({ data, isConnectable }) {
       />
       <input
         type="text"
-        value={buttonName}
+        value={inputValue}
         className="activeborder"
         style={buttonStyle}
-        onChange={(e) => updateButtonName(e)}
+        onChange={(e) => handleChange(e)}
       />
     </>
   );
 }
 
-export default ButtonNode;
+export default InputHoc(ButtonNode);

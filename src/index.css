@@ -28,6 +28,21 @@ code {
 .dndflow aside .description {
   margin-bottom: 10px;
 }
+.MuiButtonBase-root{
+  justify-content: space-between !important;
+  max-width: 70% !important;
+}
+
+.stackname{
+  height: 40vh;
+  overflow: scroll;
+  padding: 10px;
+
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+}
 
 .dndflow .dndnode {
   height: 20px;

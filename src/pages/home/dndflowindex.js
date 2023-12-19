@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import { useNavigate,useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { useNodesState, useEdgesState } from "reactflow";
 import "reactflow/dist/style.css";
@@ -10,12 +10,13 @@ import FlowPage from "../../components/common/reactflow.js";
 import { useDispatch } from "react-redux";
 import { getFlow } from "../../redux/flowAction";
 import { useSelector } from "react-redux";
+import AlertUser from "../../components/modalComponent";
 
 const label = { inputProps: { "aria-label": "Switch demo" } };
 
 const initialNodes = [
   {
-    id: "1",
+    id: "1", 
     type: "input",
     data: { label: "Start" },
     position: { x: 250, y: 5 },
@@ -23,14 +24,14 @@ const initialNodes = [
 ];
 const DnDFlow = () => {
   const reactFlowWrapper = useRef(null);
-  const location  = useLocation();
+  const location = useLocation();
   const navigate = useNavigate();
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  let {action,arrayIndex} = location.state;
+  let { action, arrayIndex } = location.state;
   let dispatch = useDispatch();
-  let nodeObject = useSelector((state)=>state.flowData);
+  let nodeObject = useSelector((state) => state.flowData);
 
   const [chatbotData, setChatbotData] = useState({
     clientName: "",
@@ -45,71 +46,84 @@ const DnDFlow = () => {
 
   let oldId;
   function buildJSON(nodes, edges, nodeId, oldid) {
-    console.log("nodesss", nodes);
+    // console.log("nodeiddd",nodeId);
     const node = nodes.find((n) => n.id === nodeId);
     if (!node) {
       return null;
     }
-    // console.log("datalabel",node.data.label);
+    // console.log("datalabel",node.data.label,"nodeId",nodeId,"oldId",oldId);
     const result = {
       message: node.data.label || node.data.response,
     };
     // console.log("resulstttt",result);
     if (nodeId.split("_")[0] == "groupnode") {
       const buttonnodeId = nodes.filter((n) => n.parentNode === nodeId);
-      const outgoingEdges = buttonnodeId.map(
-        (node) => edges.filter((edge) => edge.source === node.id)[0]
-      );
+      const outgoingEdges = buttonnodeId.map((node) => {
+       let availableoutgoing =  edges.filter((edge) => edge.source === node.id)[0]
+       if(availableoutgoing){
+        return availableoutgoing
+       }
+       else {
+        return node
+       }
+      });
       // const outgoingEdges = edges.filter((edge) => edge.source === nodeId);
-
+        console.log("outgoingedges",buttonnodeId);
       if (outgoingEdges.length > 0) {
         result.options = outgoingEdges.map((edge) => {
-          const currentNode = nodes.find((n) => n.id === edge.source);
-          const followUpNode = nodes.find((n) => n.id === edge.target);
+          if(edge?.source){
 
-          if (currentNode.parentNode) {
-            oldId = followUpNode.id;
+            const currentNode = nodes.find((n) => n.id === edge?.source);
+            const followUpNode = nodes.find((n) => n.id === edge?.target);
+           
+            if (currentNode?.parentNode) {
+              if(followUpNode){
+                oldId = followUpNode.id;
+                return {
+                  response: currentNode.data.label,
+                  follow_up: buildJSON(
+                    nodes,
+                    edges,
+                    followUpNode.id,
+                    currentNode.id
+                  ),
+                };
+              }
+             
+            } else {
+              oldId = followUpNode?.id;
+              return {
+                message: currentNode?.data.label,
+                follow_up: buildJSON(
+                  nodes,
+                  edges,
+                  followUpNode?.id,
+                  currentNode?.id
+                ),
+              };
+            }
+          }
+          else{
             return {
-              response: currentNode.data.label,
-              follow_up: buildJSON(
-                nodes,
-                edges,
-                followUpNode.id,
-                currentNode.id
-              ),
-            };
-          } else {
-            oldId = followUpNode.id;
-            return {
-              message: currentNode.data.label,
-              follow_up: buildJSON(
-                nodes,
-                edges,
-                followUpNode.id,
-                currentNode.id
-              ),
-            };
+              response:edge.data.label
+            }
           }
         });
       }
+      
     } else {
       const outgoingEdges = edges.filter((edge) => edge.source === nodeId);
       if (outgoingEdges.length > 0) {
         result.options = outgoingEdges.map((edge) => {
           const currentNode = nodes.find((n) => n.id === edge.source);
+
           const followUpNode = nodes.find((n) => n.id === edge.target);
           if (oldId == currentNode.id) {
+            oldId = followUpNode.id;
             let lastEdge = edges.find((n) => n.source == currentNode.id);
             let lastNode = nodes.find((n) => n.id == lastEdge.target);
             return {
-              response: lastNode.data.label,
-            };
-          }
-
-          if (currentNode.parentNode) {
-            oldId = followUpNode.id;
-            return {
-              response: currentNode.data.label,
+              // response: lastNode.data.label,
               follow_up: buildJSON(
                 nodes,
                 edges,
@@ -117,7 +131,8 @@ const DnDFlow = () => {
                 currentNode.id
               ),
             };
-          } else {
+          }
+         else if(oldId !== currentNode.id){
             oldId = followUpNode.id;
             return {
               message: currentNode.data.label,
@@ -128,6 +143,32 @@ const DnDFlow = () => {
                 currentNode.id
               ),
             };
+          }
+
+          if (currentNode.parentNode) {
+            oldId = currentNode.id;
+            return {
+              response: currentNode.data.label,
+              follow_up: buildJSON(
+                nodes,
+                edges,
+                followUpNode.id,
+                currentNode.id
+              ),
+            };
+          } 
+          else  {
+          
+              return {
+                
+                follow_up: buildJSON(
+                  nodes,
+                  edges,
+                  followUpNode.id,
+                  currentNode.id
+                ),
+              };
+            
           }
         });
       }
@@ -137,8 +178,8 @@ const DnDFlow = () => {
   }
 
   useEffect(() => {
-    if (nodeObject && action =="Edit") {
-       let savedNodeObject = [...nodeObject[arrayIndex].flowElements.nodes];
+    if (nodeObject && action == "Edit") {
+      let savedNodeObject = [...nodeObject[arrayIndex].flowElements.nodes];
       setNodes(savedNodeObject);
       setEdges(nodeObject[arrayIndex].flowElements.edges);
     }
@@ -150,8 +191,7 @@ const DnDFlow = () => {
       flowName: chatbotData,
     };
     console.log("saved", savedElements);
-    
-    dispatch(getFlow({savedElements}))
+    dispatch(getFlow({ savedElements }));
     navigate("/");
     const startingNodeId = "1";
     const resultJSON = buildJSON(
@@ -169,7 +209,7 @@ const DnDFlow = () => {
     setChatbotData({ ...chatbotData, [name]: value });
   };
 
-  
+
 
   return (
     <>
@@ -202,32 +242,38 @@ const DnDFlow = () => {
       </div>
 
       <div className="dndflow">
-        <FlowPage
-          nodes={nodes}
-          ref={reactFlowWrapper}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          // onConnect={onConnect}
-          setEdges={setEdges}
-          setReactFlowInstance={setReactFlowInstance}
-          reactFlowInstance={reactFlowInstance}
-          onDragOver={onDragOver}
-          // onDrop={onDrop}
-          setNodes={setNodes}
-          onStop={onStop}
-        />
+    
+
+          <FlowPage
+            nodes={nodes}
+            ref={reactFlowWrapper}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            // onConnect={onConnect}
+            // onDrop={onDrop}
+            setEdges={setEdges}
+            setReactFlowInstance={setReactFlowInstance}
+            reactFlowInstance={reactFlowInstance}
+            onDragOver={onDragOver}
+            setNodes={setNodes}
+            onStop={onStop}
+          />
+        
         <button
           onClick={() => saveElements()}
           style={{
-            backgroundColor: "#7294d4",
+            backgroundColor: "#87cc87",
             margin: "10px",
             color: "white",
+            fontWeight:"bolder",
             height: "30px",
             borderRadius: "5px",
             fontSize: "20px",
             position: "fixed",
             bottom: "0",
+            right:"0",
+            border:"none"
           }}
         >
           Submit

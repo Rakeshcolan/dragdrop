@@ -1,8 +1,5 @@
-import { useCallback, useContext, useEffect, useState } from "react";
 import { Handle, NodeResizeControl, NodeResizer, Position } from "reactflow";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import { InputContext } from "../../inputcontext/inputContext";
+import { InputHoc } from "../hoc/inputHoc";
 
 function ResizeIcon() {
   return (
@@ -28,28 +25,13 @@ function ResizeIcon() {
 }
 const handleStyle = { left: 10 };
 
-function TextUpdaterNode({ data, isConnectable,...props }) {
+function TextUpdaterNode({ data, isConnectable,handleChange,handleDrop,inputValue}) {
 
-  let contextdata = useContext(InputContext)
-  let {value,changeId,changeValue} = contextdata;
-  const [inputValue, setInputValue] = useState(data.inputValue || "");
   const controlStyle = {
     background: "transparent",
     border: "none",
   };
 
-  const handleChange = (event) => {
-    const data1 = event.target.value;
-
-    setInputValue(data1);
-    changeValue(event.target.value,data.nodeId)
-    // data.onChangeInput(data1, data.groupId);
-  };
-  useEffect(()=>{
-    if(data.label){
-      setInputValue(data.label)
-    }
-  },[])
   return (
     <>
       <NodeResizeControl style={controlStyle} minWidth={100} minHeight={50}>
@@ -76,6 +58,7 @@ function TextUpdaterNode({ data, isConnectable,...props }) {
           // value={data.label}
           value={inputValue}
           onChange={(event) => handleChange(event)}
+          onDrop = {(e)=>handleDrop(e)}
         ></textarea>
         <Handle
           type="target"
@@ -87,4 +70,4 @@ function TextUpdaterNode({ data, isConnectable,...props }) {
   );
 }
 
-export default TextUpdaterNode;
+export default InputHoc(TextUpdaterNode);

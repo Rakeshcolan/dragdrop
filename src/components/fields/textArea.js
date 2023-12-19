@@ -1,23 +1,9 @@
-import { useContext, useEffect, useState } from "react";
 import { Handle, Position } from "reactflow";
 import "../../index.css";
-import { InputContext } from "../../inputcontext/inputContext";
+import { InputHoc } from "../hoc/inputHoc";
 
-const TextAreaUpdater = ({ data, isConnectable }) => {
-  let contextdata = useContext(InputContext)
-  let {value,changeId,changeValue} = contextdata;
-  const [textValue, setTextValue] = useState("");
-  const handleChange = (e) => {
-    setTextValue(e.target.value);
-    changeValue(e.target.value,data.nodeId)
-    // data.onChangeInput(e.target.value, data.nodeId);
-  };
+const TextAreaUpdater = ({   data, isConnectable,handleChange,handleDrop,inputValue }) => {
 
-  useEffect(()=>{
-    if(data.label){
-      setTextValue(data.label)
-    }
-  },[])
   return (
     <>
       <Handle type="target" position={Position.Left} />
@@ -35,12 +21,13 @@ const TextAreaUpdater = ({ data, isConnectable }) => {
             rows="5"
             cols="15"
             className="grouptextarea activeborder"
-            value={textValue}
+            value={inputValue}
             onChange={(event) => handleChange(event)}
+            onDrop={(e)=>handleDrop(e)}
           ></textarea>
         </div>
       </div>
     </>
   );
 };
-export default TextAreaUpdater;
+export default InputHoc(TextAreaUpdater);
