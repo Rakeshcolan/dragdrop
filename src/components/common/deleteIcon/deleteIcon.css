@@ -1,0 +1,9 @@
+.iconstyle{
+    cursor: pointer !important;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    color:white;
+    font-size: small !important;
+    font-weight: 400 !important;
+}

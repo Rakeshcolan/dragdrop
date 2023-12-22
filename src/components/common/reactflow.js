@@ -14,14 +14,14 @@ import {
   addEdge,
   useNodesState,
 } from "reactflow";
-import {memo} from "react"
+import { memo } from "react";
 import Sidebar from "../fields/Sidebar";
 import ButtonNode from "../../components/fields/buttonNode";
 import TextAreaUpdater from "../../components/fields/textArea";
 import TextUpdaterNode from "../../components/fields/TextUpdaterNode";
 import "reactflow/dist/style.css";
 import { useSelector } from "react-redux";
-import { InputContext } from "../../inputcontext/inputContext";
+import { NodeContext } from "../../nodecontext/nodeContext";
 import AlertUser from "../modalComponent";
 import { Payment } from "@mui/icons-material";
 
@@ -41,22 +41,34 @@ const FlowPage = forwardRef((props, ref) => {
   } = props;
 
   const reactFlowWrapper = useRef(null);
-  let contextdata = useContext(InputContext);
+  let contextdata = useContext(NodeContext);
   let { value, changeId, changeValue } = contextdata;
-  const [nodeNum,setNodeNum] = useState(0)
-  const [openModal,setOpenModal] = useState(false)
+  const [nodeNum, setNodeNum] = useState(0);
+  const [openModal, setOpenModal] = useState(false);
   const [nodeTypes, setNodeTypes] = useState({
     textupdater: TextUpdaterNode,
     buttonNode: ButtonNode,
     textAreaUpdater: TextAreaUpdater,
   });
 
-  let id = 0;
+  let oldNodeId = nodes?.filter((node) => node.id.split("_")[0] == "dndnode");
+  let oldGroudNodeId = nodes?.filter(
+    (node) => node.id.split("_")[0] == "groupnode"
+  );
+
+  console.log(
+    "nodesss",
+    oldNodeId,
+    oldGroudNodeId,
+    "oldNodeId",
+    oldNodeId.length
+  );
+  let id = oldNodeId.length;
   const getId = () => `dndnode_${id++}`;
-  let groupId = 1;
+  let groupId = oldGroudNodeId.length;
   const getGroupId = () => `groupnode_${groupId++}`;
 
- const {payPrice} = useSelector((state)=>state)
+  const { payPrice } = useSelector((state) => state);
 
   const onConnect = (params) =>
     setEdges((eds) => {
@@ -84,87 +96,87 @@ const FlowPage = forwardRef((props, ref) => {
             label: value,
           };
         }
-
         return node;
       })
-      );
-    };
+    );
+  };
+// reactFlowInstance.addNodes(nodes)
+// reactFlowInstance.addEdges(edges)
 
-    const onDrop = useCallback(
-     (event) => {
-      
-      if(nodeNum<5){
-        event.preventDefault();
-        let parentGroupId = event.target.id;
-        let parentWrapper = event.target.classList[0];
-        const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-        let type = event.dataTransfer.getData("application/reactflow");
-        let droppingid = event.dataTransfer.getData("id");
-        const parentPosition = reactFlowInstance
-          .getNodes()
-          .find((element) => element.id === parentGroupId)?.position;
-        if (typeof type === "undefined" || !type) {
-          return;
-        }
-        if(type === "headtext") return;
-        let newNode;
-        const position = reactFlowInstance.project({
-          x: event.clientX - reactFlowBounds.left,
-          y: event.clientY - reactFlowBounds.top,
-        });
-        if (parentGroupId.split("_").includes("groupnode")) {
-          const adjustedPosition = {
-            x: position.x - parentPosition.x - 40,
-            y: position.y - parentPosition.y - 40,
-          };
-          let nodeId = getId();
-          newNode = {
-            id: nodeId,
-            type: type,
-            position: adjustedPosition,
-            parentNode: parentGroupId,
-            data: { nodeId: nodeId },
-            // onChangeInput: updateTextUpdaterInput },
-          };
-        } else if (
-          parentWrapper === "react-flow__pane" &&
-          droppingid.split("_").includes("groupnode")
-        ) {
-          let nodeID = getGroupId();
-          newNode = {
-            id: nodeID,
-            type: type,
-            position,
-            data: {
-              groupId: nodeID,
-              nodeId: nodeID,
-              // onChangeInput: updateTextUpdaterInput,
-            },
-          };
-        } else {
-          let nodeId = getId();
-          newNode = {
-            id: nodeId,
-            type: type,
-            position,
-            data: { nodeId: nodeId },
-            // , onChangeInput: updateTextUpdaterInput },
-          };
-        }
-        setNodes((nds) =>nds.concat(newNode));
+
+console.log("reactflowinstance",reactFlowInstance,"0000",reactFlowInstance?.getNodes());
+  const onDrop = useCallback(
+    (event) => {
+      event.preventDefault();
+      let parentGroupId = event.target.id;
+      let parentWrapper = event.target.classList[0];
+      const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+      let type = event.dataTransfer.getData("application/reactflow");
+      let droppingid = event.dataTransfer.getData("id");
+      const parentPosition = reactFlowInstance
+        .getNodes()
+        .find((element) => element.id === parentGroupId)?.position;
+      if (typeof type === "undefined" || !type) {
+        return;
       }
-     
+      if (type === "headtext") return;
+      let newNode;
+      const position = reactFlowInstance.project({
+        x: event.clientX - reactFlowBounds.left,
+        y: event.clientY - reactFlowBounds.top,
+      });
+      if (parentGroupId.split("_").includes("groupnode")) {
+        const adjustedPosition = {
+          x: position.x - parentPosition.x - 40,
+          y: position.y - parentPosition.y - 40,
+        };
+        let nodeId = getId();
+        newNode = {
+          id: nodeId,
+          type: type,
+          position: adjustedPosition,
+          parentNode: parentGroupId,
+          data: { nodeId: nodeId ,nodeInstance:reactFlowInstance},
+          // onChangeInput: updateTextUpdaterInput },
+        };
+      } else if (
+        parentWrapper === "react-flow__pane" &&
+        droppingid.split("_").includes("groupnode")
+      ) {
+        let nodeID = getGroupId();
+        newNode = {
+          id: nodeID,
+          type: type,
+          position,
+          data: {
+            groupId: nodeID,
+            nodeId: nodeID,
+            nodeInstance:reactFlowInstance,
+            // onChangeInput: updateTextUpdaterInput,
+          },
+        };
+      } else {
+        let nodeId = getId();
+        newNode = {
+          id: nodeId,
+          type: type,
+          position,
+          data: { nodeId: nodeId,nodeInstance:reactFlowInstance },
+          // , onChangeInput: updateTextUpdaterInput },
+        };
+      }
+      setNodes((nds) => nds.concat(newNode));
     },
     [reactFlowInstance]
   );
-  useEffect(()=>{
-      setNodeNum(nodes.length)
-    },[nodes])
+  useEffect(() => {
+    setNodeNum(nodes.length);
+  }, [nodes]);
 
-    const Payment = ()=>{
-      setOpenModal(true)
-    }
-  
+  const Payment = () => {
+    setOpenModal(true);
+  };
+console.log("onload",nodes);
   return (
     <>
       <ReactFlowProvider>
@@ -173,8 +185,8 @@ const FlowPage = forwardRef((props, ref) => {
           id="flowpaper"
           ref={reactFlowWrapper}
         >
-          <AlertUser open={openModal} setOpenModal={setOpenModal}/>
-          
+          <AlertUser open={openModal} setOpenModal={setOpenModal} />
+
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -183,7 +195,7 @@ const FlowPage = forwardRef((props, ref) => {
             onConnect={onConnect}
             onInit={setReactFlowInstance}
             className="react-flow-subflows-example"
-            onDrop={nodeNum<payPrice?onDrop:Payment}
+            onDrop={nodeNum < payPrice ? onDrop : Payment}
             onDragOver={onDragOver}
             nodeTypes={nodeTypes}
             onNodeDragStop={onStop}

@@ -3,7 +3,7 @@ import { BrowserRouter as Router, useRoutes } from "react-router-dom";
 import { routesConfig } from "./components/routes/routes";
 import { flowStore, persistor } from "./redux/flowStore";
 import { PersistGate } from 'redux-persist/integration/react';
-import { InputContextProvider } from "./inputcontext/inputContext";
+import { NodeContextProvider } from "./nodecontext/nodeContext";
 
 
 export const App = () => {
@@ -11,9 +11,9 @@ export const App = () => {
   return (
     <Provider store={flowStore}>
         <PersistGate loading={null} persistor={persistor}>
-          <InputContextProvider>
+          <NodeContextProvider>
              {routerConfig}
-          </InputContextProvider>
+          </NodeContextProvider>
       </PersistGate>
     </Provider>
   );

@@ -1,14 +1,15 @@
 import { Handle, Position } from "reactflow";
 import "../../index.css";
+import DeleteIcon from "../common/deleteIcon/deleteIcon";
 import { InputHoc } from "../hoc/inputHoc";
 
-const TextAreaUpdater = ({   data, isConnectable,handleChange,handleDrop,inputValue }) => {
+const TextAreaUpdater = ({   data, isConnectable,handleDelete,handleChange,handleDrop,inputValue,dataone }) => {
 
   return (
     <>
       <Handle type="target" position={Position.Left} />
       <Handle type="source" position={Position.Right} />
-      <div className="textareacontainer">
+      <div className="textareacontainer" style={{position:"relative"}}>
         <div
           className="textareadiv quickdiv"
           style={{ backgroundColor: "#db5290" }}
@@ -26,6 +27,7 @@ const TextAreaUpdater = ({   data, isConnectable,handleChange,handleDrop,inputVa
             onDrop={(e)=>handleDrop(e)}
           ></textarea>
         </div>
+        <DeleteIcon onDeleteInstance = {data.nodeInstance} deleteId={data.nodeId}/>
       </div>
     </>
   );

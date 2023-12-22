@@ -16,7 +16,7 @@ const label = { inputProps: { "aria-label": "Switch demo" } };
 
 const initialNodes = [
   {
-    id: "1", 
+    id: "1",
     type: "input",
     data: { label: "Start" },
     position: { x: 250, y: 5 },
@@ -59,25 +59,25 @@ const DnDFlow = () => {
     if (nodeId.split("_")[0] == "groupnode") {
       const buttonnodeId = nodes.filter((n) => n.parentNode === nodeId);
       const outgoingEdges = buttonnodeId.map((node) => {
-       let availableoutgoing =  edges.filter((edge) => edge.source === node.id)[0]
-       if(availableoutgoing){
-        return availableoutgoing
-       }
-       else {
-        return node
-       }
+        let availableoutgoing = edges.filter(
+          (edge) => edge.source === node.id
+        )[0];
+        if (availableoutgoing) {
+          return availableoutgoing;
+        } else {
+          return node;
+        }
       });
       // const outgoingEdges = edges.filter((edge) => edge.source === nodeId);
-        console.log("outgoingedges",buttonnodeId);
+      console.log("outgoingedges", buttonnodeId);
       if (outgoingEdges.length > 0) {
         result.options = outgoingEdges.map((edge) => {
-          if(edge?.source){
-
+          if (edge?.source) {
             const currentNode = nodes.find((n) => n.id === edge?.source);
             const followUpNode = nodes.find((n) => n.id === edge?.target);
-           
+
             if (currentNode?.parentNode) {
-              if(followUpNode){
+              if (followUpNode) {
                 oldId = followUpNode.id;
                 return {
                   response: currentNode.data.label,
@@ -89,7 +89,6 @@ const DnDFlow = () => {
                   ),
                 };
               }
-             
             } else {
               oldId = followUpNode?.id;
               return {
@@ -102,15 +101,13 @@ const DnDFlow = () => {
                 ),
               };
             }
-          }
-          else{
+          } else {
             return {
-              response:edge.data.label
-            }
+              response: edge.data.label,
+            };
           }
         });
       }
-      
     } else {
       const outgoingEdges = edges.filter((edge) => edge.source === nodeId);
       if (outgoingEdges.length > 0) {
@@ -131,8 +128,7 @@ const DnDFlow = () => {
                 currentNode.id
               ),
             };
-          }
-         else if(oldId !== currentNode.id){
+          } else if (oldId !== currentNode.id) {
             oldId = followUpNode.id;
             return {
               message: currentNode.data.label,
@@ -156,19 +152,15 @@ const DnDFlow = () => {
                 currentNode.id
               ),
             };
-          } 
-          else  {
-          
-              return {
-                
-                follow_up: buildJSON(
-                  nodes,
-                  edges,
-                  followUpNode.id,
-                  currentNode.id
-                ),
-              };
-            
+          } else {
+            return {
+              follow_up: buildJSON(
+                nodes,
+                edges,
+                followUpNode.id,
+                currentNode.id
+              ),
+            };
           }
         });
       }
@@ -179,9 +171,14 @@ const DnDFlow = () => {
 
   useEffect(() => {
     if (nodeObject && action == "Edit") {
+      console.log("nodeObject",nodeObject,reactFlowInstance);
       let savedNodeObject = [...nodeObject[arrayIndex].flowElements.nodes];
+      let savedEdges = [...nodeObject[arrayIndex].flowElements.edges]
       setNodes(savedNodeObject);
       setEdges(nodeObject[arrayIndex].flowElements.edges);
+      // reactFlowInstance.addNodes({nodes:savedNodeObject})
+      // reactFlowInstance.addEgdes({edges:savedEdges})
+      // console.log("getnodes",reactFlowInstance.getNodes());
     }
   }, []);
 
@@ -195,8 +192,8 @@ const DnDFlow = () => {
     navigate("/");
     const startingNodeId = "1";
     const resultJSON = buildJSON(
-      savedElements.flowElements.nodes,
-      savedElements.flowElements.edges,
+      reactFlowInstance.toObject().nodes,
+      reactFlowInstance.toObject().edges,
       startingNodeId
     );
     console.log(resultJSON);
@@ -208,8 +205,6 @@ const DnDFlow = () => {
     let value = e.target.value;
     setChatbotData({ ...chatbotData, [name]: value });
   };
-
-
 
   return (
     <>
@@ -243,37 +238,36 @@ const DnDFlow = () => {
 
       <div className="dndflow">
     
+        <FlowPage
+          nodes={nodes}
+          ref={reactFlowWrapper}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          // onConnect={onConnect}
+          // onDrop={onDrop}
+          setEdges={setEdges}
+          setReactFlowInstance={setReactFlowInstance}
+          reactFlowInstance={reactFlowInstance}
+          onDragOver={onDragOver}
+          setNodes={setNodes}
+          onStop={onStop}
+        />
 
-          <FlowPage
-            nodes={nodes}
-            ref={reactFlowWrapper}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            // onConnect={onConnect}
-            // onDrop={onDrop}
-            setEdges={setEdges}
-            setReactFlowInstance={setReactFlowInstance}
-            reactFlowInstance={reactFlowInstance}
-            onDragOver={onDragOver}
-            setNodes={setNodes}
-            onStop={onStop}
-          />
-        
         <button
           onClick={() => saveElements()}
           style={{
             backgroundColor: "#87cc87",
             margin: "10px",
             color: "white",
-            fontWeight:"bolder",
+            fontWeight: "bolder",
             height: "30px",
             borderRadius: "5px",
             fontSize: "20px",
             position: "fixed",
             bottom: "0",
-            right:"0",
-            border:"none"
+            right: "0",
+            border: "none",
           }}
         >
           Submit

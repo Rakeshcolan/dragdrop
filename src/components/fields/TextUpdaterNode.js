@@ -1,4 +1,5 @@
 import { Handle, NodeResizeControl, NodeResizer, Position } from "reactflow";
+import DeleteIcon from "../common/deleteIcon/deleteIcon";
 import { InputHoc } from "../hoc/inputHoc";
 
 function ResizeIcon() {
@@ -25,7 +26,7 @@ function ResizeIcon() {
 }
 const handleStyle = { left: 10 };
 
-function TextUpdaterNode({ data, isConnectable,handleChange,handleDrop,inputValue}) {
+function TextUpdaterNode({ data, isConnectable,handleDelete,handleChange,handleDrop,inputValue,dataone}) {
 
   const controlStyle = {
     background: "transparent",
@@ -40,7 +41,8 @@ function TextUpdaterNode({ data, isConnectable,handleChange,handleDrop,inputValu
 
       <div
         className="text-updater-node groupnode groupnodediv"
-        id={data.groupId}
+        style={{position:"relative"}}
+        id={dataone.groupId}
       >
 
         <Handle
@@ -65,6 +67,7 @@ function TextUpdaterNode({ data, isConnectable,handleChange,handleDrop,inputValu
           position={Position.Left}
           isConnectable={isConnectable}
         />
+         <DeleteIcon onDeleteInstance = {data.nodeInstance} deleteId={dataone.nodeId}/>
       </div>
     </>
   );

@@ -1,13 +1,15 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { InputContext } from "../../inputcontext/inputContext";
+import { NodeContext } from "../../nodecontext/nodeContext";
 
 
 export const InputHoc = (FlowComponents)=>{
     const UpdateInput = ({data,...props})=>{
-        let contextdata = useContext(InputContext);
+      console.log("dataaaaaaaaaaaaaaaa",data.nodeInstance?.getNodes);
+        let contextdata = useContext(NodeContext);
         let dataNodeId = data.nodeId;
+        // let dataInstance = data.nodeInstance;
       
-        let {value,changeId,changeValue} = contextdata;
+        let {value,changeId,changeValue,handleDelete } = contextdata;
         const [inputValue, setInputValue] = useState(data.inputValue || "");
      
       
@@ -17,6 +19,10 @@ export const InputHoc = (FlowComponents)=>{
           changeValue(event.target.value,dataNodeId)
           // data.onChangeInput(data1, data.groupId);
         };
+
+        // const deleteNode = ()=>{
+        //   handleDelete(dataNodeId,dataInstance)
+        // }
 
         useEffect(()=>{
           if(data.label){
@@ -31,7 +37,7 @@ export const InputHoc = (FlowComponents)=>{
           changeValue(prevValue,dataNodeId)
         }
 
-        return <FlowComponents handleChange={handleChange} handleDrop={handleDrop} inputValue={inputValue} data={data} {...props}/>
+        return <FlowComponents handleChange={handleChange} handleDrop={handleDrop}  inputValue={inputValue} data={data} {...props}/>
     }
     return UpdateInput;
 }
