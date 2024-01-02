@@ -26,7 +26,7 @@ function ResizeIcon() {
 }
 const handleStyle = { left: 10 };
 
-function TextUpdaterNode({ data, isConnectable,handleDelete,handleChange,handleDrop,inputValue,dataone}) {
+function TextUpdaterNode({ isConnectable,handleDelete,handleChange,handleDrop,inputValue,dataone}) {
 
   const controlStyle = {
     background: "transparent",
@@ -67,7 +67,7 @@ function TextUpdaterNode({ data, isConnectable,handleDelete,handleChange,handleD
           position={Position.Left}
           isConnectable={isConnectable}
         />
-         <DeleteIcon onDeleteInstance = {data.nodeInstance} deleteId={dataone.nodeId}/>
+         <DeleteIcon  deleteId={dataone.nodeId}/>
       </div>
     </>
   );

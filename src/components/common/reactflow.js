@@ -24,6 +24,8 @@ import { useSelector } from "react-redux";
 import { NodeContext } from "../../nodecontext/nodeContext";
 import AlertUser from "../modalComponent";
 import { Payment } from "@mui/icons-material";
+import { useDispatch } from "react-redux";
+import { addInstance } from "../../redux/flowAction";
 
 const FlowPage = forwardRef((props, ref) => {
   const {
@@ -39,7 +41,7 @@ const FlowPage = forwardRef((props, ref) => {
     onStop,
     setEdges,
   } = props;
-
+  let dispatch = useDispatch();
   const reactFlowWrapper = useRef(null);
   let contextdata = useContext(NodeContext);
   let { value, changeId, changeValue } = contextdata;
@@ -53,16 +55,9 @@ const FlowPage = forwardRef((props, ref) => {
 
   let oldNodeId = nodes?.filter((node) => node.id.split("_")[0] == "dndnode");
   let oldGroudNodeId = nodes?.filter(
-    (node) => node.id.split("_")[0] == "groupnode"
+    (node) => node.id.split("_")[0] === "groupnode"
   );
 
-  console.log(
-    "nodesss",
-    oldNodeId,
-    oldGroudNodeId,
-    "oldNodeId",
-    oldNodeId.length
-  );
   let id = oldNodeId.length;
   const getId = () => `dndnode_${id++}`;
   let groupId = oldGroudNodeId.length;
@@ -100,11 +95,12 @@ const FlowPage = forwardRef((props, ref) => {
       })
     );
   };
-// reactFlowInstance.addNodes(nodes)
-// reactFlowInstance.addEdges(edges)
 
+  useEffect(() => {
+    //adding reactinstance to redux to help with deletion
+    dispatch(addInstance({ instance: reactFlowInstance }));
+  }, [nodes]);
 
-console.log("reactflowinstance",reactFlowInstance,"0000",reactFlowInstance?.getNodes());
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
@@ -136,8 +132,7 @@ console.log("reactflowinstance",reactFlowInstance,"0000",reactFlowInstance?.getN
           type: type,
           position: adjustedPosition,
           parentNode: parentGroupId,
-          data: { nodeId: nodeId ,nodeInstance:reactFlowInstance},
-          // onChangeInput: updateTextUpdaterInput },
+          data: { nodeId: nodeId },
         };
       } else if (
         parentWrapper === "react-flow__pane" &&
@@ -151,8 +146,6 @@ console.log("reactflowinstance",reactFlowInstance,"0000",reactFlowInstance?.getN
           data: {
             groupId: nodeID,
             nodeId: nodeID,
-            nodeInstance:reactFlowInstance,
-            // onChangeInput: updateTextUpdaterInput,
           },
         };
       } else {
@@ -161,8 +154,7 @@ console.log("reactflowinstance",reactFlowInstance,"0000",reactFlowInstance?.getN
           id: nodeId,
           type: type,
           position,
-          data: { nodeId: nodeId,nodeInstance:reactFlowInstance },
-          // , onChangeInput: updateTextUpdaterInput },
+          data: { nodeId: nodeId },
         };
       }
       setNodes((nds) => nds.concat(newNode));
@@ -176,7 +168,7 @@ console.log("reactflowinstance",reactFlowInstance,"0000",reactFlowInstance?.getN
   const Payment = () => {
     setOpenModal(true);
   };
-console.log("onload",nodes);
+  console.log("onload", nodes);
   return (
     <>
       <ReactFlowProvider>

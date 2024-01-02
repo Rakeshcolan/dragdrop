@@ -3,7 +3,7 @@ import "../../index.css";
 import DeleteIcon from "../common/deleteIcon/deleteIcon";
 import { InputHoc } from "../hoc/inputHoc";
 
-const TextAreaUpdater = ({   data, isConnectable,handleDelete,handleChange,handleDrop,inputValue,dataone }) => {
+const TextAreaUpdater = ({   isConnectable,handleDelete,handleChange,handleDrop,inputValue,dataone }) => {
 
   return (
     <>
@@ -27,7 +27,7 @@ const TextAreaUpdater = ({   data, isConnectable,handleDelete,handleChange,handl
             onDrop={(e)=>handleDrop(e)}
           ></textarea>
         </div>
-        <DeleteIcon onDeleteInstance = {data.nodeInstance} deleteId={data.nodeId}/>
+        <DeleteIcon  deleteId={dataone.nodeId}/>
       </div>
     </>
   );

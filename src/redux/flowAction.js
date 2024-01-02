@@ -4,6 +4,7 @@ let flowArray = localStorage.getItem('object')
 
 let initialState = {
     flowData:[],
+    instanceNode:{},
      savedFlow:false,
      payPrice:5
     
@@ -14,23 +15,27 @@ export const flowSlice = createSlice({
     name:'createflow',
     reducers:{
         getFlow:(state,{payload})=>{
-            console.log("payloadd",payload.savedElements);
+          
             state.flowData = [...state.flowData,payload.savedElements]
             
         },
         resetFormData:(state,{payload})=>{
-            console.log("working ");
+         
             state.flowData = []
             state.payPrice = 2
         },
 
         addPayment:(state,{payload})=>{
             state.payPrice=state.payPrice+5;
+        },
+        addInstance:(state,{payload})=>{
+            state.instanceNode = payload.instance
+            
         }
     }
 })
 
 
-export  const {getFlow,resetFormData,addPayment} = flowSlice.actions;
+export  const {getFlow,resetFormData,addPayment,addInstance} = flowSlice.actions;
 
 export default flowSlice.reducer;
